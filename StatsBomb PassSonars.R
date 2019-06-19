@@ -1,14 +1,11 @@
 #PassSonar tutorial using StatsBomb free data
-#Created by: Eliot McKinley
-#Contact: etmckinley@gmail.com
-#Date: February 3 2019
 
 library(tidyverse)
 library(viridis)
 library(StatsBombR)
 
 #load in pitch plot function
-source('./Functions/createPitchETM.R')
+source('createPitchETM.R')
 
 #load in Statsbomb data 
 StatsBombData = StatsBombFreeEvents()
@@ -76,7 +73,8 @@ match.select=7444
 
 game.lineup=StatsBombData%>%filter(team.name==team.select, type.name=='Starting XI', match_id==match.select )
 game.players=game.lineup$tactics.lineup[[1]][["player.name"]]
-team.formation= parse_number( game.lineup$tactics.formation)
+# team.formation= parse_number( game.lineup$tactics.formation)
+team.formation=  game.lineup$tactics.formation
 #game.lineup$tactics.lineup[[1]][["position.name"]]  #uncomment to view positions to help place into correct locations of field
 
 player.plots=list()
@@ -111,6 +109,12 @@ for (i in 1:length(game.players)){
   }
 }
 
+
+# new line added
+text.color="black"
+text_colour="black"
+
+
 #this is a 4-4-2 example. Use similar methods for other formations
 
 if (team.formation==442){
@@ -119,7 +123,7 @@ if (team.formation==442){
   back.line=20
   mid.line=48
   forward.line=77
-  p=createPitch(grass_colour = background_color,goal_colour=text_colour, line_colour = text.color)+coord_flip(ylim=c(0,80))+
+  p<-createPitch(grass_colour = background_color,goal_colour=text_colour, line_colour = text.color)+coord_flip(ylim=c(0,80))+
     theme(aspect.ratio = 120/80, plot.title = element_text(size=18, hjust=0.5, vjust=-2, color=text.color),
           plot.background = element_rect(fill = background_color,colour = NA),
           panel.background = element_rect(fill = background_color,colour = NA))+
@@ -135,7 +139,7 @@ if (team.formation==442){
     annotation_custom(grob=player.plots[[8]], xmin=mid.line+5, xmax=mid.line+5+radar.size, ymax=ymax+1, y=ymax-radar.size+1)+ #RM
     annotation_custom(grob=player.plots[[9]], xmin=mid.line+5, xmax=mid.line+5+radar.size, ymax=-3+radar.size, y=-3)+ #LM
     annotation_custom(grob=colorbar, xmin=3, xmax=7, ymin=1, ymax=18)+
-    annotate("text", label="concept:@etmckinley\ndata:@StatsBomb", x=6, y=79, hjust=1,vjust=1 ,size=3.75, color=text.color)+
+    annotate("text", label="data:@StatsBomb", x=6, y=79, hjust=1,vjust=1 ,size=3.75, color=text.color)+
     annotate("text", label="Mean Pass Distance (Yards)", x=9, y=3, hjust=0, size=3, color=text.color)+
     annotate("text", label='Bar length = normalized pass angle frequency; Bar color = mean pass distance', color=text.color, x=-2, y=79, hjust=1, size=3)+
     annotate("text", label=paste0('Starting Formation: ', team.formation), color=text.color, x=-2, y=0, hjust=0, size=5, fontface="bold")+
@@ -144,4 +148,4 @@ if (team.formation==442){
   
 }
 
-ggsave(p, file=paste0('./', team.select,' PassSonar.png'), width=9.5, height=11.5, dpi=150, bg=background_color )
+ggsave(p, file=paste0('./', team.select,' PassSonar_NEW.png'), width=9.5, height=11.5, dpi=150, bg=background_color )
